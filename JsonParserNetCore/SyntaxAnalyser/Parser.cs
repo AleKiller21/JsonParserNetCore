@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using JsonParser;
 using JsonParser.LexicalAnalyser;
 using JsonParser.SyntaxAnalyser.Exceptions;
+using JsonParserNetCore.SyntaxAnalyser.Nodes;
 
-namespace JsonParser.SyntaxAnalyser
+namespace JsonParserNetCore.SyntaxAnalyser
 {
     public class Parser
     {
@@ -19,37 +19,42 @@ namespace JsonParser.SyntaxAnalyser
             _currentToken = _lex.GetNextToken();
         }
 
-        public void Parse()
+        public ObjectNode Parse()
         {
-            Object();
+            var objectNode = Object();
             if(!CheckTokenType(TokenType.Eof))
                 throw new SyntaxException($"End of json expected at row {GetTokenRow()} column {GetTokenColumn()}.");
+
+            return objectNode;
         }
 
-        private void Object()
+        private ObjectNode Object()
         {
             if (!CheckTokenType(TokenType.CurlyBraceOpen))
                 throw new CurlyBraceOpenExpectedException(GetTokenRow(), GetTokenColumn());
 
             NexToken();
-            MemberList();
+            var members = new Dictionary<string, ValueNode>();
+            MemberList(members);
             if(!CheckTokenType(TokenType.CurlyBraceClose))
                 throw new CurlyBraceCloseExpectedException(GetTokenRow(), GetTokenColumn());
 
             NexToken();
+            return new ObjectNode(members);
         }
 
-        private void MemberList()
+        private void MemberList(Dictionary<string, ValueNode> members)
         {
             if (CheckTokenType(TokenType.LiteralString))
             {
-                Key();
+                var key = Key();
                 if (!CheckTokenType(TokenType.Colon))
                     throw new ColonExpectedException(GetTokenRow(), GetTokenColumn());
 
                 NexToken();
-                Value();
-                MemberListPrime();
+                var value = Value();
+                members.Add(key, value);
+                MemberListPrime(members);
             }
 
             else
@@ -58,12 +63,12 @@ namespace JsonParser.SyntaxAnalyser
             }
         }
 
-        private void MemberListPrime()
+        private void MemberListPrime(Dictionary<string, ValueNode> members)
         {
             if (CheckTokenType(TokenType.Comma))
             {
                 NexToken();
-                MemberListPrimePrime();
+                MemberListPrimePrime(members);
             }
             else
             {
@@ -71,85 +76,103 @@ namespace JsonParser.SyntaxAnalyser
             }
         }
 
-        private void MemberListPrimePrime()
+        private void MemberListPrimePrime(Dictionary<string, ValueNode> members)
         {
-            Key();
+            var key = Key();
             if(!CheckTokenType(TokenType.Colon))
                 throw new ColonExpectedException(GetTokenRow(), GetTokenColumn());
 
             NexToken();
-            Value();
-            MemberListPrime();
+            var value = Value();
+            members.Add(key, value);
+            MemberListPrime(members);
         }
 
-        private void Key()
+        private string Key()
         {
             if(!CheckTokenType(TokenType.LiteralString))
                 throw new LiteralStringExpectedException(GetTokenRow(), GetTokenColumn());
 
+            var key = _currentToken.Lexeme;
             NexToken();
+            return key.Replace("\"", string.Empty);
         }
 
-        private void Value()
+        private ValueNode Value()
         {
             if (CheckTokenType(TokenType.LiteralInt) || CheckTokenType(TokenType.LiteralFloat))
-                LiteralNum();
+                return LiteralNum();
 
-            else if(CheckTokenType(TokenType.LiteralString)) NexToken();
-            else if(CheckTokenType(TokenType.CurlyBraceOpen)) Object();
-            else if (CheckTokenType(TokenType.SquareBracketOpen)) Array();
-            else throw new SyntaxException($"Numeric literal, string, object or array token expected as json value at " +
+            if (CheckTokenType(TokenType.LiteralString))
+            {
+                var stringValue = _currentToken.Lexeme;
+                NexToken();
+                return new StringNode(stringValue.Replace("\"", string.Empty));
+            }
+
+            if(CheckTokenType(TokenType.CurlyBraceOpen)) return Object();
+            if (CheckTokenType(TokenType.SquareBracketOpen)) return Array();
+
+            throw new SyntaxException($"Numeric literal, string, object or array token expected as json value at " +
                                            $"row {GetTokenRow()} colum {GetTokenColumn()}");
         }
 
-        private void LiteralNum()
+        private NumberNode LiteralNum()
         {
-            if(CheckTokenType(TokenType.LiteralInt) || CheckTokenType(TokenType.LiteralFloat)) NexToken();
-            else
+            if (CheckTokenType(TokenType.LiteralInt) || CheckTokenType(TokenType.LiteralFloat))
             {
-                throw new SyntaxException($"Numeric literal expected at row {GetTokenRow()} column {GetTokenColumn()}.");
+                var numValue = double.Parse(_currentToken.Lexeme);
+                NexToken();
+
+                return new NumberNode(numValue);
             }
+
+            throw new SyntaxException($"Numeric literal expected at row {GetTokenRow()} column {GetTokenColumn()}.");
         }
 
-        private void Array()
+        private ArrayNode Array()
         {
             if(!CheckTokenType(TokenType.SquareBracketOpen))
                 throw new SyntaxException($"'[' token expected at row {GetTokenRow()} column {GetTokenColumn()}.");
 
             NexToken();
-            ValueList();
+            var arrayValue = ValueList();
             
             if(!CheckTokenType(TokenType.SquareBracketClose))
                 throw new SyntaxException($"']' token expected at row {GetTokenRow()} column {GetTokenColumn()}.");
 
             NexToken();
+
+            return new ArrayNode(arrayValue);
         }
 
-        private void ValueList()
+        private ValueList ValueList()
         {
             if (IsValue())
             {
-                Value();
-                ValueListPrime();
+                var valueNode = Value();
+                var valueList = ValueListPrime();
+
+                valueList.Insert(0, valueNode);
+                return valueList;
             }
-            else
-            {
-                //Epsilon
-            }
+
+            return new ValueList();
         }
 
-        private void ValueListPrime()
+        private ValueList ValueListPrime()
         {
             if (CheckTokenType(TokenType.Comma))
             {
                 NexToken();
-                Value();
-                ValueListPrime();
+                var valueNode = Value();
+                var valueList = ValueListPrime();
+
+                valueList.Insert(0, valueNode);
+                return valueList;
             }
-            else
-            {
-                //Epsilon
-            }
+
+            return new ValueList();
         }
 
         private void NexToken()

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace JsonParserNetCore.SyntaxAnalyser.Nodes
 {
-    public abstract class ValueNode
+    public class ValueList : List<ValueNode>
     {
-        internal abstract dynamic GetValue();
+        public new dynamic this[int index] => base[index].GetValue();
     }
 }

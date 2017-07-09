@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace JsonParserNetCore.SyntaxAnalyser.Nodes
 {
     public class ArrayNode : ValueNode
     {
-        public List<dynamic> ValueList;
+        public ValueList values;
 
-        public ArrayNode()
+        public ArrayNode(ValueList valueList)
         {
-            ValueList = new List<dynamic>();
+            values = valueList;
         }
 
-        public override dynamic GetValue()
+        internal override dynamic GetValue()
         {
-            return ValueList;
+            return values;
         }
     }
 }

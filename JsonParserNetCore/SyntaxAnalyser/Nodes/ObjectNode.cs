@@ -8,16 +8,21 @@ namespace JsonParserNetCore.SyntaxAnalyser.Nodes
     {
         public Dictionary<string, ValueNode> Members;
 
-        public ObjectNode()
+        public ObjectNode(Dictionary<string, ValueNode> members)
         {
-            Members = new Dictionary<string, ValueNode>();
+            Members = members;
         }
 
-        public ValueNode this[string key] => Members[key].GetValue();
+        public dynamic this[string key] => Members[key].GetValue();
 
-        public override dynamic GetValue()
+        internal override dynamic GetValue()
         {
             return this;
+        }
+
+        public Dictionary<string, ValueNode>.KeyCollection GetKeys()
+        {
+            return Members.Keys;
         }
     }
 }
