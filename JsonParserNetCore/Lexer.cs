@@ -41,7 +41,7 @@ namespace JsonParser
 
             if(_currentSymbol.symbol == '$') return new Token(_currentSymbol + "", TokenType.Eof, _currentSymbol.Row, _currentSymbol.Col);
             if (_currentSymbol.symbol == '"') return GetStringToken();
-            if (char.IsDigit(_currentSymbol.symbol)) return GetNumToken();
+            if (char.IsDigit(_currentSymbol.symbol) || _currentSymbol.symbol == '-') return GetNumToken();
             if (_punctuationSymbols.ContainsKey(_currentSymbol.symbol))
             {
                 var row = _currentSymbol.Row;
@@ -61,6 +61,15 @@ namespace JsonParser
             var col = _currentSymbol.Col;
 
             NextSymbol();
+            if (lexeme.ToString() == "-")
+            {
+                if(!char.IsDigit(_currentSymbol.symbol))
+                    throw new LexicalException($"Unrecognized token found at row {_currentSymbol.Row} column {_currentSymbol.Col}.");
+
+                lexeme.Append(_currentSymbol.symbol);
+                NextSymbol();
+            }
+
             if (_currentSymbol.symbol == '.') return GetFloatToken(lexeme, row, col);
             while (char.IsDigit(_currentSymbol.symbol))
             {

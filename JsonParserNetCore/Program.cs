@@ -10,11 +10,11 @@ namespace JsonParserNetCore
         static void Main(string[] args)
         {
             var json = @"{
-            	""inge"": ""carlos"",
+            	""inge"": ""-carlos"",
             	""array"":[
             		{},{},{},{},{},{},{},[[[[[]]]]]
             	],
-            	""jack"": 25,
+            	""jack"": -1,
             	""aku"": 55,
             	""dbz"": [""goku"", ""trunks"", ""gohan""],
             	""vegueta"": [{},{},{},{},{},""Pikoro""],
@@ -32,14 +32,15 @@ namespace JsonParserNetCore
             //}";
             var parser = new Parser(json);
             var value = parser.Parse();
+            Console.WriteLine(value["jack"]);
             //foreach (var val in value["dbz"])
             //{
             //    Console.WriteLine(val);
             //}
-            for (var i = 0; i < value["dbz"].Count; i++)
-            {
-                Console.WriteLine(value["dbz"][i]);
-            }
+            //for (var i = 0; i < value["dbz"].Count; i++)
+            //{
+            //    Console.WriteLine(value["dbz"][i]);
+            //}
         }
     }
 }
