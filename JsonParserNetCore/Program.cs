@@ -25,8 +25,7 @@ namespace JsonParser
 		""\n"": 25
 	}
 }";
-            var lexer = new Lexer(json);
-            var parser = new Parser(lexer);
+            var parser = new Parser(json);
             parser.Parse();
             Console.WriteLine("PASE!!");
         }

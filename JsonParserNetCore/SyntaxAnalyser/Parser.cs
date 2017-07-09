@@ -10,13 +10,13 @@ namespace JsonParser.SyntaxAnalyser
 {
     public class Parser
     {
-        private Lexer Lex;
+        private readonly Lexer _lex;
         private Token _currentToken;
 
-        public Parser(Lexer lex)
+        public Parser(string json)
         {
-            Lex = lex;
-            _currentToken = Lex.GetNextToken();
+            _lex = new Lexer(json);
+            _currentToken = _lex.GetNextToken();
         }
 
         public void Parse()
@@ -154,7 +154,7 @@ namespace JsonParser.SyntaxAnalyser
 
         private void NexToken()
         {
-            _currentToken = Lex.GetNextToken();
+            _currentToken = _lex.GetNextToken();
         }
 
         private bool CheckTokenType(TokenType type)
