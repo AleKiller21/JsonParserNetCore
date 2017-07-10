@@ -20,10 +20,10 @@ namespace JsonParserNetCore
 	""degrees"": [""Computer Science""],
 	""department"": ""IT"",
 	""phoneNumber"": -1,
-	""Skills"": [""C#"", ""C++"", ""Java"", ""JavaScript"", ""SQL"", ""Git"", ""VideoEditing""],
+	""Skills"": [""C#"", ""C++"", ""Java"", ""JavaScript"", ""Python"", ""SQL"", ""Git"", ""VideoEditing""],
 	""projects"": [{
 			""name"": ""DBCLI"",
-			""description"": ""A database manager for a file based database""
+			""description"": ""A database manager""
 		},
 		{
 			""name"": ""Automata Visualizer"",
@@ -36,11 +36,12 @@ namespace JsonParserNetCore
             var parser = new Parser(json);
             var value = parser.Parse();
             Console.WriteLine(value["department"]);
-            //Console.WriteLine(value["dbz"][2]);
-            foreach (var key in value.GetKeys())
-            {
-                Console.WriteLine(value[key]);
-            }
+
+            //foreach (var key in value.GetKeys())
+            //{
+            //    Console.WriteLine(value[key]);
+            //}
+
             //for (var i = 0; i < value["projects"].Count; i++)
             //{
             //    Console.WriteLine(value["projects"][i]["description"]);
