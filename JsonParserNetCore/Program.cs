@@ -39,18 +39,21 @@ namespace JsonParserNetCore
             var parser = new Parser(json);
             var value = parser.Parse();
 
-            Console.WriteLine(value["projects"][1]["another object"]["negative"]);
-            Console.WriteLine(value.IsEmpty());
+            //Console.WriteLine(value["City"]);
+
+            //Console.WriteLine(value["projects"][1]["another object"]["negative"]);
+
+            //Console.WriteLine(value.IsEmpty());
 
             //foreach (var key in value.GetKeys())
             //{
             //    Console.WriteLine(value[key]);
             //}
 
-            //foreach (var skill in value["Skills"])
-            //{
-            //    Console.WriteLine(skill.GetValue());
-            //}
+            foreach (var skill in value["Skills"])
+            {
+                Console.WriteLine(skill.GetValue());
+            }
 
             //for (var i = 0; i < value["projects"].Count; i++)
             //{
