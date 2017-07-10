@@ -14,7 +14,7 @@ namespace JsonParserNetCore.SyntaxAnalyser.Nodes
             _values = valueList;
         }
 
-        internal override dynamic GetValue()
+        public override dynamic GetValue()
         {
             return _values;
         }

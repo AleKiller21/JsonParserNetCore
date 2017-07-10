@@ -15,7 +15,7 @@ namespace JsonParserNetCore.SyntaxAnalyser.Nodes
 
         public dynamic this[string key] => _members[key].GetValue();
 
-        internal override dynamic GetValue()
+        public override dynamic GetValue()
         {
             return this;
         }

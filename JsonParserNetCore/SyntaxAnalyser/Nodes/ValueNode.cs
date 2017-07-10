@@ -6,6 +6,6 @@ namespace JsonParserNetCore.SyntaxAnalyser.Nodes
 {
     public abstract class ValueNode
     {
-        internal abstract dynamic GetValue();
+        public abstract dynamic GetValue();
     }
 }

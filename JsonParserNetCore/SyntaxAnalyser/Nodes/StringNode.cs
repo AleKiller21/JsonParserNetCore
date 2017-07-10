@@ -13,7 +13,7 @@ namespace JsonParserNetCore.SyntaxAnalyser.Nodes
             _stringValue = value;
         }
 
-        internal override dynamic GetValue()
+        public override dynamic GetValue()
         {
             return _stringValue;
         }
