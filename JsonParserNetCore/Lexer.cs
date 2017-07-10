@@ -42,6 +42,7 @@ namespace JsonParser
             if(_currentSymbol.symbol == '$') return new Token(_currentSymbol + "", TokenType.Eof, _currentSymbol.Row, _currentSymbol.Col);
             if (_currentSymbol.symbol == '"') return GetStringToken();
             if (char.IsDigit(_currentSymbol.symbol) || _currentSymbol.symbol == '-') return GetNumToken();
+            if (char.IsLetter(_currentSymbol.symbol)) return GetReservedWordToken();
             if (_punctuationSymbols.ContainsKey(_currentSymbol.symbol))
             {
                 var row = _currentSymbol.Row;
@@ -52,6 +53,25 @@ namespace JsonParser
             }
 
             throw new LexicalException($"Unrecognized token found at row {_currentSymbol.Row} column {_currentSymbol.Col}.");
+        }
+
+        private Token GetReservedWordToken()
+        {
+            var lexeme = new StringBuilder(_currentSymbol.symbol + "");
+            var row = _currentSymbol.Row;
+            var col = _currentSymbol.Col;
+
+            NextSymbol();
+            while (char.IsLetter(_currentSymbol.symbol))
+            {
+                lexeme.Append(_currentSymbol.symbol);
+                NextSymbol();
+            }
+
+            if(!_reservedWords.ContainsKey(lexeme.ToString()))
+                throw new LexicalException($"Unrecognized token, {lexeme}, found at row {row} column {col}.");
+
+            return new Token(lexeme.ToString(), _reservedWords[lexeme.ToString()], row, col);
         }
 
         private Token GetNumToken()

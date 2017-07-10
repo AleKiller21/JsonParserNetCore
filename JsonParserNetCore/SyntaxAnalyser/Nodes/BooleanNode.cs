@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace JsonParserNetCore.SyntaxAnalyser.Nodes
 {
-    public class ArrayNode : ValueNode
+    public class BooleanNode : ValueNode
     {
-        private readonly ValueList _values;
+        private readonly bool _booleanValue;
 
-        public ArrayNode(ValueList valueList)
+        public BooleanNode(bool value)
         {
-            _values = valueList;
+            _booleanValue = value;
         }
 
         internal override dynamic GetValue()
         {
-            return _values;
+            return _booleanValue;
         }
     }
 }

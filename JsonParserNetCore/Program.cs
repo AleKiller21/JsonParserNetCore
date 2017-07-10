@@ -10,36 +10,40 @@ namespace JsonParserNetCore
         static void Main(string[] args)
         {
             var json = @"{
-            	""inge"": ""-carlos"",
-            	""array"":[
-            		{},{},{},{},{},{},{},[[[[[]]]]]
-            	],
-            	""jack"": -1,
-            	""aku"": 55,
-            	""dbz"": [""goku"", ""trunks"", ""gohan""],
-            	""vegueta"": [{},{},{},{},{},""Pikoro""],
-            	""madness!!"":
-            	{
-            		""yo"": 25
-            	}
-            }";
+	""firstName"": ""Alejandro"",
+	""lastName"": ""Ferrera"",
+	""age"": 22,
+	""Address"": -1,
+	""City"": ""San Pedro Sula"",
+	""married"": false,
+	""home number"": -1,
+	""degrees"": [""Computer Science""],
+	""department"": ""IT"",
+	""phoneNumber"": -1,
+	""Skills"": [""C#"", ""C++"", ""Java"", ""JavaScript"", ""SQL"", ""Git"", ""VideoEditing""],
+	""projects"": [{
+			""name"": ""DBCLI"",
+			""description"": ""A database manager for a file based database""
+		},
+		{
+			""name"": ""Automata Visualizer"",
+			""description"": -1
+		}
+	],
+	""permanent"": true
+}";
 
-            //            var json = @"{
-            //	""person"": {
-            //		""name"": ""Alejandro"",
-            //		""age"": 22
-            //	}
-            //}";
             var parser = new Parser(json);
             var value = parser.Parse();
-            Console.WriteLine(value["jack"]);
-            //foreach (var val in value["dbz"])
+            Console.WriteLine(value["department"]);
+            //Console.WriteLine(value["dbz"][2]);
+            foreach (var key in value.GetKeys())
+            {
+                Console.WriteLine(value[key]);
+            }
+            //for (var i = 0; i < value["projects"].Count; i++)
             //{
-            //    Console.WriteLine(val);
-            //}
-            //for (var i = 0; i < value["dbz"].Count; i++)
-            //{
-            //    Console.WriteLine(value["dbz"][i]);
+            //    Console.WriteLine(value["projects"][i]["description"]);
             //}
         }
     }

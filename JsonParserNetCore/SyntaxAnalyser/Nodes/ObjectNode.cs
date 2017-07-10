@@ -6,14 +6,14 @@ namespace JsonParserNetCore.SyntaxAnalyser.Nodes
 {
     public class ObjectNode : ValueNode
     {
-        public Dictionary<string, ValueNode> Members;
+        private readonly Dictionary<string, ValueNode> _members;
 
         public ObjectNode(Dictionary<string, ValueNode> members)
         {
-            Members = members;
+            _members = members;
         }
 
-        public dynamic this[string key] => Members[key].GetValue();
+        public dynamic this[string key] => _members[key].GetValue();
 
         internal override dynamic GetValue()
         {
@@ -22,7 +22,12 @@ namespace JsonParserNetCore.SyntaxAnalyser.Nodes
 
         public Dictionary<string, ValueNode>.KeyCollection GetKeys()
         {
-            return Members.Keys;
+            return _members.Keys;
+        }
+
+        public bool IsEmpty()
+        {
+            return _members.Count == 0;
         }
     }
 }

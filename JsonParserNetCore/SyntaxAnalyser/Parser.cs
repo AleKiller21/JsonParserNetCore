@@ -112,9 +112,22 @@ namespace JsonParserNetCore.SyntaxAnalyser
 
             if(CheckTokenType(TokenType.CurlyBraceOpen)) return Object();
             if (CheckTokenType(TokenType.SquareBracketOpen)) return Array();
+            if (CheckTokenType(TokenType.RwTrue) || CheckTokenType(TokenType.RwFalse)) return BooleanValue();
 
             throw new SyntaxException($"Numeric literal, string, object or array token expected as json value at " +
                                            $"row {GetTokenRow()} colum {GetTokenColumn()}");
+        }
+
+        private BooleanNode BooleanValue()
+        {
+            if (CheckTokenType(TokenType.RwTrue) || CheckTokenType(TokenType.RwFalse))
+            {
+                var value = _currentToken.Lexeme;
+                NexToken();
+                return new BooleanNode(bool.Parse(value));
+            }
+
+            throw new SyntaxException($"true/false keywords expected at row {GetTokenRow()} column {GetTokenColumn()}.");
         }
 
         private NumberNode LiteralNum()
